@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block page_content %}
+
+<ul class="posts">
+    {% for post in posts %}
+    <li class="post well" style="padding-bottom:30px">
+        <div class="post-content  ">
+            <div class="post-author" style="text-align:center">{{ post.title }}</div>
+             <div style="float:right"><a href="{{url_for('.inf',username=post.author.username)}}">{{post.author.username}}</a>于{{ moment(post.timestamp).format('L') }}</div>
+             <div class="clearfix"></div>
+            <div class="post-body">
+            {% if post.body_html %}
+                {{post.body_html | safe}}
+            {% else %}
+                {{ post.body }}
+            {% endif %}
+            </div>
+            <div class="post-footer">
+                {% if current_user==post.author %}
+                <a href="{{url_for('.edit',id=post.id)}}">
+                    <span class="label label-primary span_under">编辑</span>
+                </a>
+                 <a href="{{url_for('.delete',id=post.id,username=current_user.username)}}">
+                    <span class="label label-danger span_under">删除</span>
+                </a>
+                {% elif current_user.is_administrator() %}
+                <a href="{{url_for('.edit',id=post.id)}}">
+                    <span class="label label-danger span_under">编辑[管理员]</span>
+                </a>
+                {%endif%}
+
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+<div class="comment" id="comments">
+    <div class="post-author" style="text-align:center;padding-top:15px">评论
+    {% for post in posts %}
+        <span class="badge" >{{post.comments.count()}}</span>
+    {% endfor %}
+    </div>
+    <div class="clearfix"></div>
+    {% if not current_user.is_authenticated %}
+        <div class="alert alert-info in fade col-md-8" style="margin-left:20px;margin-right:20px;">
+            <p>登录后才可以进行评论！</p>
+        </div>
+        <div class="col-md-3"><a href="{{url_for('auth.login')}}" class="btn btn-info" style="margin-top:5px">登录</a></div>
+    {% endif %}
+    <div class="clearfix"></div>
+    {% if current_user.can(Permission.COMMENT) %}
+    <div class="comment-form">
+        {{wtf.quick_form(form)}}
+    </div>
+    {% endif %}
+    {% include '_comments.html' %}
+
+
+    {% for post in posts %}
+        {% if post.comments.count()>0 %}
+            {% if pagination %}
+                <div class="pagination">
+                {{macros.pagination_widget(pagination,'.post',fragment='#comments',id=posts[0].id)}}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning in fade" style="margin-left:20px;margin-right:20px;">暂无评论</div>
+                <br><br>
+        {% endif %}
+    {% endfor %}
+
+</div>
+
+{% endblock%}

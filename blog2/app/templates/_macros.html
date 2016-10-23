@@ -1,0 +1,32 @@
+{% macro pagination_widget(pagination,endpoint,fragment='') %}<!-- 相当于一个函数，pagination,endpoint为参数 -->
+<ul class="pagination">
+    <li  {% if  not pagination.has_prev %} class='disabled' {% endif %} ><!-- 首页 -->
+        <a href="{% if pagination.has_prev %}
+        {{url_for(endpoint,page=pagination.page-1,**kwargs)}}{{fragment}}
+        {% else %}#{% endif %}">
+            &laquo;<!--  << 上一页-->
+        </a>
+    </li>
+    {% for p in pagination.iter_pages() %}<!-- iter_pages()迭代器显示页数 -->
+        {% if p %}<!-- p不为None -->
+            {% if p==pagination.page%}
+                <li class="active"><!-- 当前页高亮显示 -->
+                    <a href="{{url_for(endpoint,page=p,**kwargs)}}{{fragment}}">{{p}}</a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{url_for(endpoint,page=p,**kwargs)}}{{fragment}}" >{{p}}</a>
+                </li>
+            {% endif %}
+        {% else %}<!-- p为None则显示省略号 -->
+            <li class="disabled"><a href="#" >&hellip;</a></li><!-- ... -->
+        {% endif %}
+    {% endfor %}
+    <li {% if not pagination.has_next %} class="disabled" {% endif %}><!-- 末页 -->
+        <a href="  {%if pagination.has_next%} {{url_for(endpoint,page=pagination.page+1,**kwargs)}}{{fragment}}
+        {% else %}#{% endif %}">&raquo;
+        </a>
+    </li>
+</ul>
+{% endmacro %}
+

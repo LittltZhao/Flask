@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}曲径通幽-确认账户{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        您好, {{ current_user.username }}!
+    </h1>
+    <h3>您还没有确认您的账户.</h3>
+    <p>
+        您需要先确认账户才能登录本站.
+        检查您的邮箱，您应该收到了带有确认链接的邮件
+    </p>
+    <p>
+        需要重新发送邮件吗？
+        <a href="{{ url_for('auth.resend_confirmation') }}">Click here</a>
+    </p>
+</div>
+{% endblock %}

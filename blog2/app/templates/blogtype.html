@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}曲径通幽{% endblock %}
+
+{% block page_content %}
+<div>
+    <table style="margin-top:30px" class="table table-hover table-responsive table-striped">
+        <thead>
+            <tr class="success">
+                <th style="text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" width="80%">题目</th>
+                <th style="text-align:center" width="20%">时间</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for post in posts%}
+                <tr class="info">
+                    <td style="text-align:center"><a href="{{url_for('.post',id=post.id)}}"  >{{ post.title}}</a></td>
+                    <td><p style="color:rgb(170,170,170); font-style: italic; " class="text-center">{{moment(post.timestamp).format('L')}}</p></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

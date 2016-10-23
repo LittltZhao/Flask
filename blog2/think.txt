@@ -1,0 +1,119 @@
+1.完成整个环境的配置 config.py
+2.创建程序实例  app/__init__  工厂函数create_app() 可以进行动态配置，扩展初始化
+3.创建路由
+	（1）创建蓝本。通过蓝本进行路由的创建。__init__.py创建了main蓝本，同时将相关路由与蓝本进行关联
+	（2）视图函数进行路由配置 views.py。配置过程使用到了表单 forms.py，邮件email.py 和数据库 models.py
+	（3）错误视图配置 errors.py
+4.程序的实例化 manage.py 调用create_app创建程序实例
+
+
+
+
+
+用户认证：
+
+1.用户认证蓝本的注册 auth/__init__.py 创建auth蓝本            app/__init__.py(注册auth蓝本)
+2.flask-login 用户认证
+	（1）用户认证的设置和用户方法的实现   初始化：app/__init__.py   通过导入UserMixin来实现用户方法 is_authenticated() is_anonymous() get_id()
+	（2）密码安全性  User中不保存密码本身，而使用密码散列值来进行保存和验证 generate_password_hash(), check_password_hash()
+	将password方法转换为属性，在注册时给password赋值，则调用password方法中的操作，存储的即为散列值   models.password()  models.verify_password()
+	（3）加载用户回调函数models  @login_manager.user_loader，找到用户？？？？？
+	（4）添加登录表单 auth/forms.py
+	（5）蓝本路由设置  auth/views.py  每个路由对应模板
+		登录 views.login login_user()
+		退出 views.logout logout_user
+3.注册用户 views.register  注册表单
+4.确认用户 通过邮件进行确认
+	（1）确 认 链 接 是 http://www.example.com/auth/confirm/<id>，id不能直接传送，需要将id产生令牌
+	（2）产生令牌 dumps   确认令牌  loads models 
+	（3）发送确认邮件 send_email(user.email,'确认账户','auth/email/confirm',user=user,token=token)
+		邮件中包含链接，点击链接重定向到confirm。未认证的用户只能进入unconfirmed界面，该界面有重新发送的链接的的的的的的dfdsaf的的
+5.修改密码  修改密码的表单
+6.重置密码  邮箱重置
+	产生重置令牌
+	发送重置邮件nd_email(user.email,"重置密码",'auth/email/',reset_password',user=user,token=token,next=request.args.get("next"))
+	重置密码
+
+
+用户角色
+1.创建角色，一共分为三种（'User','Moderator','Administrator'）,不同角色对应不同的权限   models.Role
+
+2.赋予用户角色通过邮箱验证创建管理员和用户角色 models.User.__init__
+
+3.权限的判断 User.can  User.is_administrator
+
+4.权限修饰器  app.decorators
+
+
+
+用户资料
+ 查看环境变量 env 
+ 修改mysql编码格式为utf-8
+ roles表不能自动创建，需要手动创建??? 
+ 导入环境变量 export FLASK_ADMIN='qq694104630@163.com'
+
+ 1.数据库中定义资料选项
+
+ 2.指定用户资料的路由(views:main.user)和模板
+
+ 3.设置用户资料的提交表单(forms)
+
+ 4.指定设置表单的路由，并将表单数据提交至数据库views:main.eidt-profile
+
+ 5.设置头像
+
+
+
+
+ 博客文章
+ 1.数据库中创建post提交博客的表以及需要提交的选项 post-user对应
+
+ 2.设置博客提交的表单
+
+ 3.设置该表单的路由及模板
+
+
+ 评论
+ 1.数据库创建comments表，并与uers和post相关联
+ 2.forms.py中创建comment表单 
+ 3.蓝本中对post进行扩充，添加comment
+ 4.进行模板的修改
+
+ 修改评论
+ 1.在base.html中创建修改评论的链接
+ 2.蓝本中创建修改评论的路由
+ 3.创建修改评论的模板
+ 4.创建评论管理路由 enable disable
+
+
+
+
+
+
+问题
+1.首页显示自己的博客缩略
+ 	目前：只能显示全部文章
+ 	需要：（1）首页缩略样式H???   （2）显示标题  
+
+ 2.创建博客主题高度太小，应调高 H???
+
+ 3.修改博客页面添加删除博客按钮，并且对页面进行修改
+
+4.post.html重写，单独显示文章以及评论
+
+
+5.自己文章中的四种分类，分别显示各个分类的博客标题
+
+
+6.导入图片用url_for()
+	 <img src="{{url_for('static',filename='img/tab4.png')}}" alt="" class="img-responsive center-block img-circle">
+7.创建博客views   create_blog()
+	post=Post(tag=Blogtype.query.get(form.tag.data),body=form.body.data,title=form.title.data,author=current_user._get_current_object())
+
+8.右侧分类应固定位置  先忽略样式
+
+
+9.搜索引擎???
+
+10.评论：登录后才可进行评论
+	暂无评论 和分页

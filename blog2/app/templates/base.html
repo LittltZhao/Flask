@@ -1,0 +1,113 @@
+{% extends "bootstrap/base.html" %}
+
+{% block head%}
+{{super()}}
+<link rel="shortcut icon" href="{{url_for('static',filename='abc.ico')}}" type="image/x-icon">
+<link rel="icon" href="{{url_for('static',filename='abc.ico')}}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles.css')}}">
+<style type="text/css">
+    
+</style>
+{% endblock %}
+
+{% block title %}曲径通幽{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-default navbar-fixed-top"  role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- <a class="navbar-brand" href="/">Flasky</a> -->
+            <a href="" class="navbar-brand" style="padding:0">
+                <img src="{{url_for('static',filename='img/logo.jpg')}}" alt="logo"><!-- 插入图片，将图片文件放在static下   插入图片用url_for() -->
+            </a>
+        </div>
+        <div class="navbar-collapse collapse" >
+            <ul class="nav navbar-nav">
+                <li><a href="{{url_for('main.index')}}"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.user', username=current_user.username) }}"><span class="glyphicon glyphicon-fire"></span> 个人博客</a></li>
+                <li><a href="{{url_for('main.create_blog')}}"><span class="glyphicon glyphicon-edit"></span> 创建博客</a></li>
+                <li><a href="{{ url_for('main.inf', username=current_user.username) }}"><span class="glyphicon glyphicon-user"></span> 个人信息</a></li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.can(Permission.MODERATE_COMMENTS) %}<!-- 是否具有管理评论权限 -->
+                    <li><a href="{{url_for('main.moderate')}}"><span class="glyphicon glyphicon-list"></span> 管理评论</a></li>
+                    {% endif %}
+                {% if current_user.is_authenticated %}
+                <!-- current_user 是Flask-login定义到，在视图函数和模板中自动可用，该变量是当前登录到用户 -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="{{ current_user.gravatar(size=18) }}"> 
+                        账户<b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{url_for('auth.change_password')}}">修改密码</a></li>
+                        <li><a href="{{url_for('auth.logout')}}">退出</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li  ><a  href="{{url_for('auth.login')}}">登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container"   style="background-color: #fff;margin-top:60px;">
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{message}}
+        </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-lg-8 col-md-9 " style="margin-left:10px; padding-right: 20px; border-right: 1px #eee solid ">
+         {% block page_content%}{% endblock %}
+        </div>
+        <div class="col-lg-4 col-md-3 " id="myscroll" style=" margin-right: -30px;  padding-top: 20px; padding-left:0">
+            <div class="well" >
+                <h3 class="text-center">分类目录</h3>
+                <ul class="nav nav-pills nav-stacked" >         
+                    <li style="text-align:center"><a href="{{url_for('main.blogtype',id=1,username=current_user.username)}}" style="color:#545454">闲话日常</a></li>
+                    <li style="text-align:center"><a href="{{url_for('main.blogtype',id=2,username=current_user.username)}}" style="color:#545454">学习笔记</a></li>
+                    <li style="text-align:center"><a href="{{url_for('main.blogtype',id=3,username=current_user.username)}}" style="color:#545454">神秘学</a></li>
+                    <li style="text-align:center"><a href="{{url_for('main.blogtype',id=4,username=current_user.username)}}" style="color:#545454">转载文章</a></li>
+                </ul>
+
+            </div>
+
+            <div class="well" style="padding:30px 22px 30px 30px;">
+                <h3 class="text-center">关于这里</h3>
+                <img src="{{url_for('static',filename='img/tab4.png')}}" alt="" class="img-responsive center-block img-circle">
+                <p>我就是我，是颜色不一样的烟火</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+<br><br><br><br><br>
+<footer id="footer">
+    <div class="container">
+        <p>企业培训 | 合作事宜 | 版权诉讼</p>
+        <p>苏ICP 备12345678. 2009-2016</p>
+    </div>
+</footer>
+
+{% endblock %}
+
+{%  block scripts %}
+{{super()}}
+{{moment.include_moment()}}
+{{moment.lang("zh-CN")}}<!-- 渲染为中文格式的时间 "zh-CN"-->
+
+{% endblock %}

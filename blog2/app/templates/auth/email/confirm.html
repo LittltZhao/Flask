@@ -1,0 +1,8 @@
+<p>Dear {{ user.username }},</p>
+<p>Welcome to <b>曲径通幽</b>!</p>
+<p>请确认您到账户 <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">点击</a>.</p>
+<p>您也可以将下面到链接粘贴到浏览器到地址栏进行验证:</p>
+<p>{{ url_for('auth.confirm', token=token, _external=True) }}</p>
+<p>真诚的,</p>
+<p>曲径通幽</p>
+<p><small>提示：本邮件不用回复</small></p>
